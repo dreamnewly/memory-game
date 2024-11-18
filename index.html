@@ -3,136 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memory Game</title>
+    <title>Memory Challenge</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
         }
-        .question {
+        .hidden {
+            display: none;
+        }
+        .task {
+            font-size: 24px;
             margin: 20px 0;
-            padding: 10px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
+            text-align: center;
         }
-        .btn {
-            margin: 5px;
+        input[type="text"] {
+            padding: 10px;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        button {
             padding: 10px 20px;
-            background-color: #4CAF50;
+            font-size: 18px;
+            background-color: #007bff;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
-        .btn:hover {
-            background-color: #45a049;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            margin: 10px auto;
+        button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <h1>Memory Game</h1>
-
-    <!-- 1-9: Text and Number Questions -->
-    <div id="questions">
-        <!-- Dynamically injected questions here -->
+    <div id="game-container">
+        <div id="task-container" class="task">Remember this number: <span id="task-text">272651</span></div>
+        <input type="text" id="answer-input" placeholder="Enter the number" class="hidden">
+        <button id="submit-button" class="hidden">Submit</button>
     </div>
-
-    <!-- Question 10: Photo Memory -->
-    <div class="question">
-        <h2>10. Photo Memory</h2>
-        <img id="photoTask1" src="https://via.placeholder.com/400x200?text=4+apples+and+2+bananas" alt="Photo of fruits">
-        <p>The image will disappear in 5 seconds.</p>
-        <button class="btn" onclick="startPhotoQuestion(1)">Start</button>
-        <p>How many apples were there?</p>
-        <input type="text" id="photoAnswer1" placeholder="Enter your answer">
-        <button class="btn" onclick="checkPhotoAnswer(1)">Submit</button>
-        <p id="photoResult1"></p>
-    </div>
-
-    <!-- Question 11: Photo Memory -->
-    <div class="question">
-        <h2>11. Photo Memory</h2>
-        <img id="photoTask2" src="https://via.placeholder.com/400x200?text=3+red+cars+and+5+blue+cars" alt="Photo of cars">
-        <p>The image will disappear in 5 seconds.</p>
-        <button class="btn" onclick="startPhotoQuestion(2)">Start</button>
-        <p>How many blue cars were there?</p>
-        <input type="text" id="photoAnswer2" placeholder="Enter your answer">
-        <button class="btn" onclick="checkPhotoAnswer(2)">Submit</button>
-        <p id="photoResult2"></p>
-    </div>
-
     <script>
-        // Questions and Answers for Text and Numbers
-        const questions = [
-            { task: "432176", hint: "Enter the number you saw.", answer: "432176" },
-            { task: '"The dog is brown and the cat is white."', hint: "What color is the dog?", answer: "brown" },
-            { task: "987654", hint: "Enter the number you saw.", answer: "987654" },
-            { task: '"The sun rises in the east and sets in the west."', hint: "Where does the sun set?", answer: "west" },
-            { task: '"Anna bought oranges, watermelons, and pineapples."', hint: "What fruits did Anna buy?", answer: "oranges, watermelons, pineapples" },
-            { task: "246813579", hint: "Enter the number you saw.", answer: "246813579" },
-            { task: '"It was raining in the morning, but sunny in the afternoon."', hint: "What was the weather in the afternoon?", answer: "sunny" },
-            { task: '"Tom and Jerry played chess. Jerry won the game."', hint: "Who won the game?", answer: "jerry" },
-            { task: '"A family went to the park with a ball and picnic basket."', hint: "What did they bring?", answer: "ball, picnic basket" },
-        ];
+        // Function to hide the task after 5 seconds
+        function startChallenge() {
+            const taskContainer = document.getElementById('task-container');
+            const inputField = document.getElementById('answer-input');
+            const submitButton = document.getElementById('submit-button');
 
-        const photoAnswers = {
-            1: "4",
-            2: "5"
-        };
-
-        // Create text/number questions dynamically
-        const questionsContainer = document.getElementById("questions");
-        questions.forEach((q, index) => {
-            const questionDiv = document.createElement("div");
-            questionDiv.className = "question";
-            questionDiv.innerHTML = `
-                <h2>${index + 1}. ${q.hint}</h2>
-                <p id="task${index + 1}">${q.task}</p>
-                <input type="text" id="answer${index + 1}" placeholder="Enter your answer">
-                <button class="btn" onclick="checkTextAnswer(${index + 1})">Submit</button>
-                <p id="result${index + 1}"></p>
-            `;
-            questionsContainer.appendChild(questionDiv);
-        });
-
-        // Check Text/Number Answers
-        function checkTextAnswer(id) {
-            const userAnswer = document.getElementById(`answer${id}`).value.toLowerCase();
-            const correctAnswer = questions[id - 1].answer.toLowerCase();
-            const resultElement = document.getElementById(`result${id}`);
-            if (userAnswer === correctAnswer) {
-                resultElement.textContent = "Correct!";
-            } else {
-                resultElement.textContent = `Incorrect. The correct answer was: ${questions[id - 1].answer}.`;
-            }
-        }
-
-        // Show Photo and Hide After 5 Seconds
-        function startPhotoQuestion(photoId) {
-            const photoElement = document.getElementById(`photoTask${photoId}`);
+            // Show the task for 5 seconds
             setTimeout(() => {
-                photoElement.style.display = "none";
+                taskContainer.classList.add('hidden');
+                inputField.classList.remove('hidden');
+                submitButton.classList.remove('hidden');
             }, 5000);
         }
 
-        // Check Photo Memory Answers
-        function checkPhotoAnswer(photoId) {
-            const userAnswer = document.getElementById(`photoAnswer${photoId}`).value.toLowerCase();
-            const correctAnswer = photoAnswers[photoId];
-            const resultElement = document.getElementById(`photoResult${photoId}`);
+        // Start the challenge on page load
+        window.onload = startChallenge;
+
+        // Submit button functionality
+        document.getElementById('submit-button').addEventListener('click', () => {
+            const userAnswer = document.getElementById('answer-input').value;
+            const correctAnswer = "272651"; // Replace with dynamic generation if needed
+
             if (userAnswer === correctAnswer) {
-                resultElement.textContent = "Correct!";
+                alert('Correct! Well done!');
             } else {
-                resultElement.textContent = `Incorrect. The correct answer was: ${correctAnswer}.`;
+                alert(`Incorrect! The correct answer was ${correctAnswer}.`);
             }
-        }
+        });
     </script>
 </body>
 </html>
